@@ -32,6 +32,7 @@ bool HelloWorld::init()
 
     /////////////////////////////
 	_count = 0;
+	_skinopt = true;
 
 	_camera =Camera::createPerspective(60, (GLfloat)visibleSize.width/visibleSize.height, 1, 1000);
 	_camera->setCameraFlag(CameraFlag::USER1);
@@ -47,16 +48,27 @@ bool HelloWorld::init()
 	this->addChild(_countLabel, 10);
 
 	auto label = Label::createWithTTF(config,"clean all");
-	auto menuItem = MenuItemLabel::create(label, CC_CALLBACK_1(HelloWorld::cleanAll,this));
-	auto menu = Menu::create(menuItem, NULL);
+	auto menuItem0 = MenuItemLabel::create(label, CC_CALLBACK_1(HelloWorld::cleanAll,this));
+	menuItem0->setPosition(Vec2(50.0f, visibleSize.height - 50.0f));
+
+	char str[32];
+	sprintf(str, "SkinOpt %s", _skinopt == true? "On": "Off");
+	_skinoptLabel = Label::createWithTTF(config, str);
+	_skinoptLabel->retain();
+	auto menuItem1 = MenuItemLabel::create(_skinoptLabel, CC_CALLBACK_1(HelloWorld::switchSkinOpt,this));
+	menuItem1->setPosition(Vec2(100.0f, visibleSize.height - 200.0f));
+
+	auto menu = Menu::create(menuItem0, menuItem1, NULL);
 	menu->setPosition(Vec2::ZERO);
-	menuItem->setPosition(Vec2(50.0f, visibleSize.height - 50.0f));
+
 	addChild(menu, 10);
 
 	_models = Layer::create();
 	_models->retain();
 	addChild(_models);
 	addNewModel(Vec2(0.0f, 0.0f));
+
+	Sprite3D::setUpdateBoneUseThreadPool(_skinopt);
 
 	auto listener = EventListenerTouchAllAtOnce::create();
 	listener->onTouchesEnded = CC_CALLBACK_2(HelloWorld::onTouchesEnded, this);
@@ -126,4 +138,14 @@ HelloWorld::~HelloWorld()
 	_models->release();
 	_countLabel->release();
 	_camera->release();
+}
+
+void HelloWorld::switchSkinOpt( cocos2d::Ref *ref )
+{
+	_skinopt = !_skinopt;
+	char str[32];
+	sprintf(str, "SkinOpt %s", _skinopt == true? "On": "Off");
+	_skinoptLabel->setString(str);
+
+	Sprite3D::setUpdateBoneUseThreadPool(_skinopt);
 }

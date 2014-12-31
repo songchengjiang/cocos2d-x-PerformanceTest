@@ -23,13 +23,16 @@ protected:
 	void addNewModel(const cocos2d::Vec2 &pos);
     void onTouchesEnded(const std::vector<cocos2d::Touch*>& touches, cocos2d::Event* event);
 	void cleanAll(cocos2d::Ref *ref);
+	void switchSkinOpt(cocos2d::Ref *ref);
 
 protected:
 
 	cocos2d::Camera *_camera;
 	cocos2d::Layer *_models;
 	cocos2d::Label *_countLabel;
+	cocos2d::Label *_skinoptLabel;
 	int _count;
+	bool _skinopt;
 };
 
 #endif // __HELLOWORLD_SCENE_H__
